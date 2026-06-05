@@ -4,8 +4,8 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String URL      = "jdbc:postgresql://localhost:5432/bibliotecaMunicipal";
-    private static final String USER     = "postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/bibliotecaMunicipal";
+    private static final String USER = "postgres";
     private static final String PASSWORD = "R1M2V3C4";
 
     private static Connection instancia = null;
