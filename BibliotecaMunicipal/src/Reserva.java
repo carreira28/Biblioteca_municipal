@@ -61,6 +61,6 @@ public class Reserva {
         } else {
             alerta = "";
         }
-        return String.format("[%d] %-35s | Req: %-20s | Saida: %s | Prev: %s | Dev: %s%s", this.id, this.tituloLivro, this.nomeRequisitante, this.dataSaida, this.dataDevPrevista, devReal, alerta);
+        return String.format("[%d] %-35s | Req: %-20s | Saida: %s | Prev: %s | Dev: %s | %s", this.id, this.tituloLivro, this.nomeRequisitante, this.dataSaida, this.dataDevPrevista, devReal, alerta);
     }
 }

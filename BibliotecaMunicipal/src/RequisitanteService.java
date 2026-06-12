@@ -6,32 +6,38 @@ public class RequisitanteService {
 
     public List<Requisitante> listarTodos() throws SQLException {
         String sql = """
-                SELECT r.id_requisitante, r.nome, r.contacto, cp.localidade
+                SELECT r.id_requisitante, r.nome, r.contacto, cp.localidade, cp.n_codigo_postal, cp.pais
                 FROM requisitantes r
-                JOIN codigo_postal cp ON r.id_codigo_postal = cp.id_codigo_postal
-                ORDER BY r.nome
-                """;
+                INNER JOIN codigo_postal cp ON r.id_codigo_postal = cp.id_codigo_postal
+                ORDER BY r.id_requisitante
+        """;
         List<Requisitante> lista = new ArrayList<>();
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) lista.add(mapear(rs));
+            while (rs.next()) {
+                Requisitante requisitante = mapear(rs);
+                lista.add(requisitante);
+            }
         }
         return lista;
     }
 
     public List<Requisitante> pesquisarPorNome(String termo) throws SQLException {
         String sql = """
-                SELECT r.id_requisitante, r.nome, r.contacto, cp.localidade
+                SELECT r.id_requisitante, r.nome, r.contacto, cp.localidade, cp.n_codigo_postal, cp.pais
                 FROM requisitantes r
-                JOIN codigo_postal cp ON r.id_codigo_postal = cp.id_codigo_postal
+                INNER JOIN codigo_postal cp ON r.id_codigo_postal = cp.id_codigo_postal
                 WHERE LOWER(r.nome) LIKE LOWER(?)
-                ORDER BY r.nome
-                """;
+                ORDER BY id_requisitante
+        """;
         List<Requisitante> lista = new ArrayList<>();
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
             stmt.setString(1, "%" + termo + "%");
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) lista.add(mapear(rs));
+                while (rs.next()) {
+                    Requisitante requisitante = mapear(rs);
+                    lista.add(requisitante);
+                }
             }
         }
         return lista;
@@ -39,11 +45,11 @@ public class RequisitanteService {
 
     public Requisitante buscarPorId(int id) throws SQLException {
         String sql = """
-                SELECT r.id_requisitante, r.nome, r.contacto, cp.localidade
+                SELECT r.id_requisitante, r.nome, r.contacto, cp.localidade, cp.n_codigo_postal, cp.pais
                 FROM requisitantes r
-                JOIN codigo_postal cp ON r.id_codigo_postal = cp.id_codigo_postal
+                INNER JOIN codigo_postal cp ON r.id_codigo_postal = cp.id_codigo_postal
                 WHERE r.id_requisitante = ?
-                """;
+        """;
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -53,13 +59,24 @@ public class RequisitanteService {
         return null;
     }
 
-    public boolean inserir(String nome, String contacto, int idCodigoPostal) throws SQLException {
-        String sql = "INSERT INTO requisitantes (nome, contacto, id_codigo_postal) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, nome);
-            stmt.setString(2, contacto);
-            stmt.setInt(3, idCodigoPostal);
-            return stmt.executeUpdate() > 0;
+    public boolean inserir(String nome, String contacto, String nCodigoPostal, String localidade) throws SQLException {
+        String sql = """
+            INSERT INTO codigo_postal (n_codigo_postal, localidade, pais) VALUES (?, ?, 'Portugal')
+        """;
+        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, nCodigoPostal);
+            stmt.setString(2, localidade);
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            int idCodigoPostal = rs.next() ? rs.getInt(1) : -1;
+
+            String sql2 = "INSERT INTO requisitantes (nome, contacto, id_codigo_postal) VALUES (?, ?, ?)";
+            try (PreparedStatement stmt2 = DatabaseConnection.getConnection().prepareStatement(sql2)) {
+                stmt2.setString(1, nome);
+                stmt2.setString(2, contacto);
+                stmt2.setInt(3, idCodigoPostal);
+                return stmt2.executeUpdate() > 0;
+            }
         }
     }
 
@@ -97,7 +114,9 @@ public class RequisitanteService {
                 rs.getInt("id_requisitante"),
                 rs.getString("nome"),
                 rs.getString("contacto"),
-                rs.getString("localidade")
+                rs.getString("localidade"),
+                rs.getString("n_codigo_postal"),
+                rs.getString("pais")
         );
     }
 }

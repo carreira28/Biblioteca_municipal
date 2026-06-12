@@ -105,7 +105,7 @@ public class Main {
             if (livros.isEmpty()) { System.out.println("Nenhum livro encontrado."); return; }
             System.out.println("\n--- Lista de Livros ---");
             livros.forEach(System.out::println);
-            System.out.println("Total: " + livros.size() + " livro(s).");
+            System.out.println("Total: " + livros.size() + " Exemplares.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
@@ -140,10 +140,9 @@ public class Main {
             System.out.print("ID Genero: ");     int idGenero = lerInteiro();
             System.out.print("ISBN: ");          String isbn   = sc.nextLine();
             System.out.print("Titulo: ");        String titulo = sc.nextLine();
-            System.out.print("Stock inicial: "); int stock     = lerInteiro();
             System.out.print("Ano publicacao: "); int ano      = lerInteiro();
 
-            boolean ok = livroService.inserir(isbn, titulo, stock, ano,
+            boolean ok = livroService.inserir(isbn, titulo, ano,
                     idCat, idIdioma, idEdit, idGenero);
             System.out.println(ok ? "Livro adicionado com sucesso!" : "Nao foi possivel adicionar.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
@@ -152,9 +151,8 @@ public class Main {
     private static void atualizarLivro() {
         System.out.print("ID do livro: "); int id    = lerInteiro();
         System.out.print("Novo titulo: "); String titulo = sc.nextLine();
-        System.out.print("Novo stock: ");  int stock = lerInteiro();
         try {
-            boolean ok = livroService.atualizar(id, titulo, stock);
+            boolean ok = livroService.atualizar(id, titulo);
             System.out.println(ok ? "Livro atualizado!" : "Livro nao encontrado.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -333,11 +331,11 @@ public class Main {
 
     private static void adicionarRequisitante() {
         try {
-            reqService.listarCodigosPostais();
-            System.out.print("ID Codigo Postal: "); int idCP     = lerInteiro();
-            System.out.print("Nome: ");             String nome      = sc.nextLine();
-            System.out.print("Contacto: ");         String contacto  = sc.nextLine();
-            boolean ok = reqService.inserir(nome, contacto, idCP);
+            System.out.print("Nome: ");             String nome         = sc.nextLine();
+            System.out.print("Contacto: ");         String contacto     = sc.nextLine();
+            System.out.print("Codigo Postal: ");    String nCodigoPostal = sc.nextLine();
+            System.out.print("Localidade: ");       String localidade   = sc.nextLine();
+            boolean ok = reqService.inserir(nome, contacto, nCodigoPostal, localidade);
             System.out.println(ok ? "Requisitante adicionado!" : "Nao foi possivel adicionar.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
