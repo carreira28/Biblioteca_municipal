@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RequisitanteDAO {
+public class RequisitanteService {
 
     public List<Requisitante> listarTodos() throws SQLException {
         String sql = """

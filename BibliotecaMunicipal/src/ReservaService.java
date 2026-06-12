@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReservaDAO {
+public class ReservaService {
 
     // ── Listar todas ────────────────────────────────────────────────────────
     public List<Reserva> listarTodas() throws SQLException {

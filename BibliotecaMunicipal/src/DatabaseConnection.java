@@ -8,21 +8,21 @@ public class DatabaseConnection {
     private static final String USER = "postgres";
     private static final String PASSWORD = "R1M2V3C4";
 
-    private static Connection instancia = null;
+    private static Connection ligacao = null;
 
     private DatabaseConnection() {}
 
     public static Connection getConnection() throws SQLException {
-        if (instancia == null || instancia.isClosed()) {
-            instancia = DriverManager.getConnection(URL, USER, PASSWORD);
+        if (ligacao == null || ligacao.isClosed()) {
+            ligacao = DriverManager.getConnection(URL, USER, PASSWORD);
         }
-        return instancia;
+        return ligacao;
     }
 
     public static void fechar() {
         try {
-            if (instancia != null && !instancia.isClosed()) {
-                instancia.close();
+            if (ligacao != null && !ligacao.isClosed()) {
+                ligacao.close();
                 System.out.println("Ligação à base de dados encerrada.");
             }
         } catch (SQLException e) {

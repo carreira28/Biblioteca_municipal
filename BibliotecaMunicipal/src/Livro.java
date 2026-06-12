@@ -4,7 +4,7 @@ public class Livro {
     private String isbn;
     private String titulo;
     private int stock;
-    private int  anoPublicacao;
+    private int anoPublicacao;
     private String categoria;
     private String idioma;
     private String editora;
@@ -25,8 +25,8 @@ public class Livro {
     public int getId() { return id; }
     public String getIsbn() { return isbn; }
     public String getTitulo() { return titulo; }
-    public int    getStock() { return stock; }
-    public int    getAnoPublicacao() { return anoPublicacao; }
+    public int getStock() { return stock; }
+    public int getAnoPublicacao() { return anoPublicacao; }
     public String getCategoria() { return categoria; }
     public String getIdioma() { return idioma; }
     public String getEditora() { return editora; }
@@ -37,6 +37,6 @@ public class Livro {
 
     @Override
     public String toString() {
-        return String.format("[%d] %-40s | ISBN: %-15s | Stock: %d | Ano: %d | %s | %s", id, titulo, isbn, stock, anoPublicacao, categoria, genero);
+        return String.format("[%d] %-40s | ISBN: %-15s | Stock: %d | Ano: %d | %s | %s", this.id, this.titulo, this.isbn, this.stock, this.anoPublicacao, this.categoria, this.genero);
     }
 }

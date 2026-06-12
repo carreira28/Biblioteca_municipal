@@ -7,9 +7,9 @@ public class Main {
 
     private static final Scanner sc = new Scanner(System.in);
     private static final String PASS_FUNC = "admin123";
-    private static final LivroDAO livroDAO  = new LivroDAO();
-    private static final RequisitanteDAO reqDAO = new RequisitanteDAO();
-    private static final ReservaDAO resDAO = new ReservaDAO();
+    private static final LivroService livroService  = new LivroService();
+    private static final RequisitanteService reqService = new RequisitanteService();
+    private static final ReservaService resService = new ReservaService();
 
     public static void main(String[] args) {
         int opcao;
@@ -101,7 +101,7 @@ public class Main {
 
     private static void listarTodosLivros() {
         try {
-            List<Livro> livros = livroDAO.listarTodos();
+            List<Livro> livros = livroService.listarTodos();
             if (livros.isEmpty()) { System.out.println("Nenhum livro encontrado."); return; }
             System.out.println("\n--- Lista de Livros ---");
             livros.forEach(System.out::println);
@@ -111,7 +111,7 @@ public class Main {
 
     private static void listarLivrosDisponiveis() {
         try {
-            List<Livro> livros = livroDAO.listarDisponiveis();
+            List<Livro> livros = livroService.listarDisponiveis();
             if (livros.isEmpty()) { System.out.println("Nenhum livro disponivel."); return; }
             System.out.println("\n--- Livros Disponiveis ---");
             livros.forEach(System.out::println);
@@ -122,7 +122,7 @@ public class Main {
         System.out.print("Titulo a pesquisar: ");
         String termo = sc.nextLine();
         try {
-            List<Livro> livros = livroDAO.pesquisarPorTitulo(termo);
+            List<Livro> livros = livroService.pesquisarPorTitulo(termo);
             if (livros.isEmpty()) System.out.println("Nenhum resultado encontrado.");
             else livros.forEach(System.out::println);
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
@@ -130,20 +130,20 @@ public class Main {
 
     private static void adicionarLivro() {
         try {
-            livroDAO.listarCategorias();
+            livroService.listarCategorias();
             System.out.print("ID Categoria: ");  int idCat    = lerInteiro();
-            livroDAO.listarIdiomas();
+            livroService.listarIdiomas();
             System.out.print("ID Idioma: ");     int idIdioma = lerInteiro();
-            livroDAO.listarEditoras();
+            livroService.listarEditoras();
             System.out.print("ID Editora: ");    int idEdit   = lerInteiro();
-            livroDAO.listarGeneros();
+            livroService.listarGeneros();
             System.out.print("ID Genero: ");     int idGenero = lerInteiro();
             System.out.print("ISBN: ");          String isbn   = sc.nextLine();
             System.out.print("Titulo: ");        String titulo = sc.nextLine();
             System.out.print("Stock inicial: "); int stock     = lerInteiro();
             System.out.print("Ano publicacao: "); int ano      = lerInteiro();
 
-            boolean ok = livroDAO.inserir(isbn, titulo, stock, ano,
+            boolean ok = livroService.inserir(isbn, titulo, stock, ano,
                     idCat, idIdioma, idEdit, idGenero);
             System.out.println(ok ? "Livro adicionado com sucesso!" : "Nao foi possivel adicionar.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
@@ -154,7 +154,7 @@ public class Main {
         System.out.print("Novo titulo: "); String titulo = sc.nextLine();
         System.out.print("Novo stock: ");  int stock = lerInteiro();
         try {
-            boolean ok = livroDAO.atualizar(id, titulo, stock);
+            boolean ok = livroService.atualizar(id, titulo, stock);
             System.out.println(ok ? "Livro atualizado!" : "Livro nao encontrado.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -164,7 +164,7 @@ public class Main {
         System.out.print("Tem a certeza? (s/n): ");
         if (sc.nextLine().equalsIgnoreCase("s")) {
             try {
-                boolean ok = livroDAO.eliminar(id);
+                boolean ok = livroService.eliminar(id);
                 System.out.println(ok ? "Livro eliminado." : "Livro nao encontrado.");
             } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
         }
@@ -202,7 +202,7 @@ public class Main {
 
     private static void listarTodasReservas() {
         try {
-            List<Reserva> lista = resDAO.listarTodas();
+            List<Reserva> lista = resService.listarTodas();
             if (lista.isEmpty()) { System.out.println("Nenhuma reserva encontrada."); return; }
             System.out.println("\n--- Todas as Reservas ---");
             lista.forEach(System.out::println);
@@ -212,7 +212,7 @@ public class Main {
 
     private static void listarReservasEmAberto() {
         try {
-            List<Reserva> lista = resDAO.listarEmAberto();
+            List<Reserva> lista = resService.listarEmAberto();
             if (lista.isEmpty()) { System.out.println("Nenhuma reserva em aberto."); return; }
             System.out.println("\n--- Reservas em Aberto ---");
             lista.forEach(System.out::println);
@@ -222,7 +222,7 @@ public class Main {
 
     private static void listarReservasAtrasadas() {
         try {
-            List<Reserva> lista = resDAO.listarAtrasadas();
+            List<Reserva> lista = resService.listarAtrasadas();
             if (lista.isEmpty()) { System.out.println("Nenhuma reserva atrasada."); return; }
             System.out.println("\n--- Reservas ATRASADAS ---");
             lista.forEach(System.out::println);
@@ -233,7 +233,7 @@ public class Main {
     private static void reservasPorRequisitante() {
         System.out.print("ID do requisitante: "); int id = lerInteiro();
         try {
-            List<Reserva> lista = resDAO.listarPorRequisitante(id);
+            List<Reserva> lista = resService.listarPorRequisitante(id);
             if (lista.isEmpty()) System.out.println("Nenhuma reserva encontrada.");
             else lista.forEach(System.out::println);
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
@@ -242,18 +242,18 @@ public class Main {
     private static void novaReserva() {
         try {
             System.out.println("\n--- Livros com exemplares disponiveis ---");
-            livroDAO.listarDisponiveis().forEach(System.out::println);
+            livroService.listarDisponiveis().forEach(System.out::println);
 
             System.out.print("\nID do livro: ");    int idLivro    = lerInteiro();
-            resDAO.listarExemplaresDisponiveis(idLivro);
+            resService.listarExemplaresDisponiveis(idLivro);
             System.out.print("ID do exemplar: "); int idExemplar = lerInteiro();
 
-            if (!resDAO.exemplarDisponivel(idExemplar)) {
+            if (!resService.exemplarDisponivel(idExemplar)) {
                 System.out.println("Exemplar nao disponivel.");
                 return;
             }
 
-            resDAO.listarFuncionarios();
+            resService.listarFuncionarios();
             System.out.print("ID do funcionario: "); int idFunc = lerInteiro();
             System.out.print("ID do requisitante: "); int idReq = lerInteiro();
 
@@ -268,7 +268,7 @@ public class Main {
                 return;
             }
 
-            boolean ok = resDAO.criar(hoje, prevista, idReq, idFunc, idExemplar);
+            boolean ok = resService.criar(hoje, prevista, idReq, idFunc, idExemplar);
             System.out.println(ok ? "Reserva criada com sucesso!" : "Nao foi possivel criar a reserva.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -276,16 +276,12 @@ public class Main {
     private static void registarDevolucao() {
         try {
             System.out.println("\n--- Reservas em Aberto ---");
-            resDAO.listarEmAberto().forEach(System.out::println);
+            resService.listarEmAberto().forEach(System.out::println);
             System.out.print("\nID da reserva a devolver: "); int id = lerInteiro();
-            boolean ok = resDAO.registarDevolucao(id);
+            boolean ok = resService.registarDevolucao(id);
             System.out.println(ok ? "Devolucao registada!" : "Reserva nao encontrada ou ja devolvida.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    // MENU REQUISITANTES
-    // ════════════════════════════════════════════════════════════════════════
 
     private static void menuRequisitantes() {
         int opcao;
@@ -317,7 +313,7 @@ public class Main {
 
     private static void listarTodosRequisitantes() {
         try {
-            List<Requisitante> lista = reqDAO.listarTodos();
+            List<Requisitante> lista = reqService.listarTodos();
             if (lista.isEmpty()) { System.out.println("Nenhum requisitante encontrado."); return; }
             System.out.println("\n--- Lista de Requisitantes ---");
             lista.forEach(System.out::println);
@@ -329,7 +325,7 @@ public class Main {
         System.out.print("Nome a pesquisar: ");
         String termo = sc.nextLine();
         try {
-            List<Requisitante> lista = reqDAO.pesquisarPorNome(termo);
+            List<Requisitante> lista = reqService.pesquisarPorNome(termo);
             if (lista.isEmpty()) System.out.println("Nenhum resultado encontrado.");
             else lista.forEach(System.out::println);
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
@@ -337,21 +333,24 @@ public class Main {
 
     private static void adicionarRequisitante() {
         try {
-            reqDAO.listarCodigosPostais();
+            reqService.listarCodigosPostais();
             System.out.print("ID Codigo Postal: "); int idCP     = lerInteiro();
             System.out.print("Nome: ");             String nome      = sc.nextLine();
             System.out.print("Contacto: ");         String contacto  = sc.nextLine();
-            boolean ok = reqDAO.inserir(nome, contacto, idCP);
+            boolean ok = reqService.inserir(nome, contacto, idCP);
             System.out.println(ok ? "Requisitante adicionado!" : "Nao foi possivel adicionar.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
     private static void atualizarRequisitante() {
-        System.out.print("ID do requisitante: "); int id          = lerInteiro();
-        System.out.print("Novo nome: ");          String nome     = sc.nextLine();
-        System.out.print("Novo contacto: ");      String contacto = sc.nextLine();
+        System.out.print("ID do requisitante: ");
+        int id = lerInteiro();
+        System.out.print("Novo nome: ");
+        String nome = sc.nextLine();
+        System.out.print("Novo contacto: ");
+        String contacto = sc.nextLine();
         try {
-            boolean ok = reqDAO.atualizar(id, nome, contacto);
+            boolean ok = reqService.atualizar(id, nome, contacto);
             System.out.println(ok ? "Requisitante atualizado!" : "Nao encontrado.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -361,7 +360,7 @@ public class Main {
         System.out.print("Tem a certeza? (s/n): ");
         if (sc.nextLine().equalsIgnoreCase("s")) {
             try {
-                boolean ok = reqDAO.eliminar(id);
+                boolean ok = reqService.eliminar(id);
                 System.out.println(ok ? "Requisitante eliminado." : "Nao encontrado.");
             } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
         }
@@ -370,7 +369,7 @@ public class Main {
     private static void menuRequisitante() {
         System.out.print("O seu ID de requisitante: "); int idReq = lerInteiro();
         try {
-            Requisitante req = reqDAO.buscarPorId(idReq);
+            Requisitante req = reqService.buscarPorId(idReq);
             if (req == null) { System.out.println("Requisitante nao encontrado."); return; }
             System.out.println("Bem-vindo/a, " + req.getNome() + "!");
 
@@ -392,7 +391,7 @@ public class Main {
                     case 2 -> pesquisarLivro();
                     case 3 -> {
                         try {
-                            List<Reserva> reservas = resDAO.listarPorRequisitante(idReq);
+                            List<Reserva> reservas = resService.listarPorRequisitante(idReq);
                             if (reservas.isEmpty()) System.out.println("Nenhuma reserva encontrada.");
                             else reservas.forEach(System.out::println);
                         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }

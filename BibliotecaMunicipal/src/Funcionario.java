@@ -18,6 +18,6 @@ public class Funcionario {
 
     @Override
     public String toString() {
-        return String.format("[%d] %-30s | %s", id, nome, localidade);
+        return String.format("[%d] %-30s | %s", this.id, this.nome, this.localidade);
     }
 }
