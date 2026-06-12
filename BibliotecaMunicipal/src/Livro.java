@@ -37,6 +37,6 @@ public class Livro {
 
     @Override
     public String toString() {
-        return String.format("[%d] %-40s | ISBN: %-15s | Stock: %d | Ano: %d | %s | %s", this.id, this.titulo, this.isbn, this.stock, this.anoPublicacao, this.categoria, this.genero);
+        return String.format("[%d] %-40s | ISBN: %-15s | Stock: %d | Ano: %d | %s | %s | %s", this.id, this.titulo, this.isbn, this.stock, this.anoPublicacao, this.categoria, this.genero, this.idioma);
     }
 }

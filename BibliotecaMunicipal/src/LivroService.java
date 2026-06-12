@@ -12,7 +12,7 @@ public class LivroService {
                 INNER JOIN idioma i ON l.id_idioma = i.id_idioma
                 INNER JOIN editoras e ON l.id_editoras  = e.id_editoras
                 INNER JOIN generos g ON l.id_generos = g.id_generos
-                ORDER BY l.titulo
+                ORDER BY id_livro;
                 """;
         List<Livro> lista = new ArrayList<>();
         try (PreparedStatement consulta = DatabaseConnection.getConnection().prepareStatement(sql);
@@ -30,6 +30,7 @@ public class LivroService {
                 INNER JOIN idioma i ON l.id_idioma = i.id_idioma
                 INNER JOIN editoras e ON l.id_editoras = e.id_editoras
                 INNER JOIN generos g ON l.id_generos = g.id_generos
+                WHERE LOWER(l.titulo) LIKE LOWER(?)
                 ORDER BY l.titulo
                 """;
         List<Livro> lista = new ArrayList<>();
@@ -48,11 +49,11 @@ public class LivroService {
                        c.tipo_categoria, i.idioma, e.nome AS editora, g.tipo_genero
                 FROM livros l
                 JOIN categorias c ON l.id_categoria = c.id_categoria
-                JOIN idioma     i ON l.id_idioma    = i.id_idioma
+                JOIN idioma i ON l.id_idioma    = i.id_idioma
                 JOIN editoras   e ON l.id_editoras  = e.id_editoras
                 JOIN generos    g ON l.id_generos   = g.id_generos
                 WHERE l.stock > 0
-                ORDER BY l.titulo
+                ORDER BY id_livro;
                 """;
         List<Livro> lista = new ArrayList<>();
         try (PreparedStatement consulta = DatabaseConnection.getConnection().prepareStatement(sql);

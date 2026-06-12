@@ -36,14 +36,31 @@ public class Reserva {
     }
 
     public boolean estaAtrasado() {
-        if (estaDevolvido()) return false;
-        return LocalDate.now().isAfter(dataDevPrevista);
+        if (estaDevolvido()) {
+            return false;
+        } else {
+            if (LocalDate.now().isAfter(dataDevPrevista)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     @Override
     public String toString() {
-        String devReal = estaDevolvido() ? dataDevReal.toString() : "Por devolver";
-        String alerta  = estaAtrasado()  ? " *** ATRASADO ***" : "";
-        return String.format("[%d] %-35s | Req: %-20s | Saida: %s | Prev: %s | Dev: %s%s", id, tituloLivro, nomeRequisitante, dataSaida, dataDevPrevista, devReal, alerta);
+        String devReal;
+        if (estaDevolvido()) {
+            devReal = dataDevReal.toString();
+        } else {
+            devReal = "Por devolver";
+        }
+        String alerta;
+        if (estaAtrasado()) {
+            alerta = "ATRASADO";
+        } else {
+            alerta = "";
+        }
+        return String.format("[%d] %-35s | Req: %-20s | Saida: %s | Prev: %s | Dev: %s%s", this.id, this.tituloLivro, this.nomeRequisitante, this.dataSaida, this.dataDevPrevista, devReal, alerta);
     }
 }

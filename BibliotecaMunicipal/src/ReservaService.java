@@ -5,7 +5,6 @@ import java.util.List;
 
 public class ReservaService {
 
-    // ── Listar todas ────────────────────────────────────────────────────────
     public List<Reserva> listarTodas() throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
@@ -21,7 +20,6 @@ public class ReservaService {
         return executarQuery(sql);
     }
 
-    // ── Listar em aberto (não devolvidas) ───────────────────────────────────
     public List<Reserva> listarEmAberto() throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
@@ -38,7 +36,6 @@ public class ReservaService {
         return executarQuery(sql);
     }
 
-    // ── Listar atrasadas ────────────────────────────────────────────────────
     public List<Reserva> listarAtrasadas() throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
@@ -56,7 +53,6 @@ public class ReservaService {
         return executarQuery(sql);
     }
 
-    // ── Listar por requisitante ─────────────────────────────────────────────
     public List<Reserva> listarPorRequisitante(int idRequisitante) throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
@@ -80,7 +76,6 @@ public class ReservaService {
         return lista;
     }
 
-    // ── Criar nova reserva ──────────────────────────────────────────────────
     public boolean criar(LocalDate dataSaida, LocalDate dataDevPrevista,
                          int idRequisitante, int idFuncionario,
                          int idExemplar) throws SQLException {
@@ -99,7 +94,6 @@ public class ReservaService {
         }
     }
 
-    // ── Registar devolução ──────────────────────────────────────────────────
     public boolean registarDevolucao(int idReserva) throws SQLException {
         String sql = """
                 UPDATE reserva SET data_dev_real = CURRENT_DATE
@@ -111,7 +105,6 @@ public class ReservaService {
         }
     }
 
-    // ── Verificar se exemplar está disponível ───────────────────────────────
     public boolean exemplarDisponivel(int idExemplar) throws SQLException {
         String sql = """
                 SELECT COUNT(*) FROM reserva
@@ -126,7 +119,6 @@ public class ReservaService {
         return false;
     }
 
-    // ── Listar exemplares disponíveis de um livro ───────────────────────────
     public void listarExemplaresDisponiveis(int idLivro) throws SQLException {
         String sql = """
                 SELECT ex.id_exemplar, lo.n_piso, lo.n_estante, lo.parteleira, e.tipo_estado
@@ -157,7 +149,6 @@ public class ReservaService {
         }
     }
 
-    // ── Listar funcionários (para quando se cria uma reserva) ───────────────
     public void listarFuncionarios() throws SQLException {
         String sql = "SELECT id_funcionario, nome FROM funcionarios ORDER BY nome";
         System.out.println("\n-- Funcionarios --");
@@ -168,7 +159,6 @@ public class ReservaService {
         }
     }
 
-    // ── Auxiliar para queries de listagem ───────────────────────────────────
     private List<Reserva> executarQuery(String sql) throws SQLException {
         List<Reserva> lista = new ArrayList<>();
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql);
@@ -178,7 +168,6 @@ public class ReservaService {
         return lista;
     }
 
-    // ── Mapeamento ResultSet → Reserva ──────────────────────────────────────
     private Reserva mapear(ResultSet rs) throws SQLException {
         Date devReal = rs.getDate("data_dev_real");
         return new Reserva(
