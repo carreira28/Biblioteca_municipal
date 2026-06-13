@@ -18,17 +18,18 @@ public class AutorService {
         return lista;
     }
 
-    public List<Autor> listarPorLivro(int idLivro) throws SQLException {
+    public List<Autor> listarPorLivro(String nomeLivro) throws SQLException {
         String sql = """
-                SELECT a.id_autor, a.nome, a.data_nas
-                FROM autor a
-                INNER JOIN autor_livro al ON a.id_autor = al.id_autor
-                WHERE al.id_livro = ?
-                ORDER BY a.nome
-                """;
+        SELECT a.id_autor, a.nome, a.data_nas
+        FROM autor a
+        INNER JOIN autor_livro al ON a.id_autor = al.id_autor
+        INNER JOIN livros l ON al.id_livro = l.id_livro
+        WHERE l.titulo ILIKE ?
+        ORDER BY a.nome
+        """;
         List<Autor> lista = new ArrayList<>();
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, idLivro);
+            stmt.setString(1, "%" + nomeLivro + "%");
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Autor autor = mapear(rs);
