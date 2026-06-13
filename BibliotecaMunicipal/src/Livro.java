@@ -38,6 +38,6 @@ public class Livro {
 
     @Override
     public String toString() {
-        return String.format("[%d] %-40s | ISBN: %-15s | Ano: %d | %s | %s | %s |%s", this.id, this.titulo, this.isbn, this.anoPublicacao, this.categoria, this.genero, this.idioma, this.estado);
+        return String.format("[%d] %s | ISBN: %s | Ano: %d | %s | %s | %s |%s", this.id, this.titulo, this.isbn, this.anoPublicacao, this.categoria, this.genero, this.idioma, this.estado);
     }
 }

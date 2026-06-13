@@ -29,6 +29,6 @@ public class Requisitante {
 
     @Override
     public String toString() {
-        return String.format("[%d] %-30s | Tel: %-15s | %-15s | %-10s | %s", this.id, this.nome, this.contacto, this.localidade, this.codigo_postal, this.pais);
+        return String.format("[%d] %s | Tel: %s | %s | %s | %s", this.id, this.nome, this.contacto, this.localidade, this.codigo_postal, this.pais);
     }
 }

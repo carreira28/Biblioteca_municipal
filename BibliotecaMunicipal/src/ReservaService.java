@@ -8,14 +8,14 @@ public class ReservaService {
     public List<Reserva> listarTodas() throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
-                       req.nome AS nome_requisitante, f.nome AS nome_funcionario,
-                       res.id_exemplar, l.titulo
+                req.nome AS nome_requisitante, f.nome AS nome_funcionario,
+                res.id_exemplar, l.titulo
                 FROM reserva res
-                JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
-                JOIN funcionarios  f   ON res.id_funcionario  = f.id_funcionario
-                JOIN exemplar      ex  ON res.id_exemplar     = ex.id_exemplar
-                JOIN livros        l   ON ex.id_livro         = l.id_livro
-                ORDER BY res.data_saida DESC
+                INNER JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
+                INNER JOIN funcionarios f ON res.id_funcionario = f.id_funcionario
+                INNER JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
+                INNER JOIN livros l ON ex.id_livro = l.id_livro
+                ORDER BY res.id_reserva
                 """;
         return executarQuery(sql);
     }
@@ -23,15 +23,15 @@ public class ReservaService {
     public List<Reserva> listarEmAberto() throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
-                       req.nome AS nome_requisitante, f.nome AS nome_funcionario,
-                       res.id_exemplar, l.titulo
+                req.nome AS nome_requisitante, f.nome AS nome_funcionario,
+                res.id_exemplar, l.titulo
                 FROM reserva res
-                JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
-                JOIN funcionarios  f   ON res.id_funcionario  = f.id_funcionario
-                JOIN exemplar      ex  ON res.id_exemplar     = ex.id_exemplar
-                JOIN livros        l   ON ex.id_livro         = l.id_livro
+                INNER JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
+                INNER JOIN funcionarios f ON res.id_funcionario = f.id_funcionario
+                INNER JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
+                INNER JOIN livros l ON ex.id_livro = l.id_livro
                 WHERE res.data_dev_real IS NULL
-                ORDER BY res.data_dev_prevista
+                ORDER BY res.id_reserva
                 """;
         return executarQuery(sql);
     }
@@ -39,13 +39,13 @@ public class ReservaService {
     public List<Reserva> listarAtrasadas() throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
-                       req.nome AS nome_requisitante, f.nome AS nome_funcionario,
-                       res.id_exemplar, l.titulo
+                req.nome AS nome_requisitante, f.nome AS nome_funcionario,
+                res.id_exemplar, l.titulo
                 FROM reserva res
-                JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
-                JOIN funcionarios  f   ON res.id_funcionario  = f.id_funcionario
-                JOIN exemplar      ex  ON res.id_exemplar     = ex.id_exemplar
-                JOIN livros        l   ON ex.id_livro         = l.id_livro
+                INNER JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
+                INNER JOIN funcionarios f ON res.id_funcionario = f.id_funcionario
+                INNER JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
+                INNER JOIN livros l ON ex.id_livro = l.id_livro
                 WHERE res.data_dev_real IS NULL
                   AND res.data_dev_prevista < CURRENT_DATE
                 ORDER BY res.data_dev_prevista
@@ -56,13 +56,13 @@ public class ReservaService {
     public List<Reserva> listarPorRequisitante(int idRequisitante) throws SQLException {
         String sql = """
                 SELECT res.id_reserva, res.data_saida, res.data_dev_prevista, res.data_dev_real,
-                       req.nome AS nome_requisitante, f.nome AS nome_funcionario,
-                       res.id_exemplar, l.titulo
+                req.nome AS nome_requisitante, f.nome AS nome_funcionario,
+                res.id_exemplar, l.titulo
                 FROM reserva res
                 JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
-                JOIN funcionarios  f   ON res.id_funcionario  = f.id_funcionario
-                JOIN exemplar      ex  ON res.id_exemplar     = ex.id_exemplar
-                JOIN livros        l   ON ex.id_livro         = l.id_livro
+                JOIN funcionarios f ON res.id_funcionario = f.id_funcionario
+                JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
+                JOIN livros l ON ex.id_livro = l.id_livro
                 WHERE res.id_requisitante = ?
                 ORDER BY res.data_saida DESC
                 """;
@@ -80,8 +80,7 @@ public class ReservaService {
                          int idRequisitante, int idFuncionario,
                          int idExemplar) throws SQLException {
         String sql = """
-                INSERT INTO reserva (data_saida, data_dev_prevista,
-                                     id_requisitante, id_funcionario, id_exemplar)
+                INSERT INTO reserva (data_saida, data_dev_prevista, id_requisitante, id_funcionario, id_exemplar)
                 VALUES (?, ?, ?, ?, ?)
                 """;
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
@@ -123,12 +122,10 @@ public class ReservaService {
         String sql = """
                 SELECT ex.id_exemplar, lo.n_piso, lo.n_estante, lo.parteleira, e.tipo_estado
                 FROM exemplar ex
-                JOIN localizacao lo ON ex.id_localizacao = lo.id_localizacao
-                JOIN estado      e  ON ex.id_estado      = e.id_estado
+                INNER JOIN localizacao lo ON ex.id_localizacao = lo.id_localizacao
+                INNER JOIN estado e ON ex.id_estado = e.id_estado
                 WHERE ex.id_livro = ?
-                  AND ex.id_exemplar NOT IN (
-                      SELECT id_exemplar FROM reserva WHERE data_dev_real IS NULL
-                  )
+                AND ex.id_estado = 1
                 """;
         System.out.println("\n-- Exemplares disponiveis --");
         try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
@@ -146,16 +143,6 @@ public class ReservaService {
                 }
                 if (!encontrou) System.out.println("Nenhum exemplar disponivel.");
             }
-        }
-    }
-
-    public void listarFuncionarios() throws SQLException {
-        String sql = "SELECT id_funcionario, nome FROM funcionarios ORDER BY nome";
-        System.out.println("\n-- Funcionarios --");
-        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next())
-                System.out.printf("[%d] %s%n", rs.getInt(1), rs.getString(2));
         }
     }
 

@@ -14,20 +14,20 @@ public class Main {
     public static void main(String[] args) {
         int opcao;
         do {
-            System.out.println("\n================================");
-            System.out.println("   BIBLIOTECA MUNICIPAL     ");
-            System.out.println("================================");
-            System.out.println(" 1. Entrar como Funcionario");
-            System.out.println(" 2. Entrar como Requisitante");
-            System.out.println(" 0. Sair");
-            System.out.println("================================");
+            System.out.println("\n|================================|");
+            System.out.println("|      BIBLIOTECA MUNICIPAL      |");
+            System.out.println("|================================|");
+            System.out.println("| 1. Entrar como Funcionario     |");
+            System.out.println("| 2. Entrar como Requisitante    |");
+            System.out.println("| 0. Sair                        |");
+            System.out.println("|================================|");
             System.out.print("Opcao: ");
             opcao = lerInteiro();
 
             switch (opcao) {
                 case 1 -> loginFuncionario();
                 case 2 -> menuRequisitante();
-                case 0 -> System.out.println("\nAte logo!");
+                case 0 -> System.out.println("\nA sair...");
                 default -> System.out.println("Opcao invalida.");
             }
         } while (opcao != 0);
@@ -48,14 +48,14 @@ public class Main {
     private static void menuFuncionario() {
         int opcao;
         do {
-            System.out.println("\n================================");
-            System.out.println("        AREA FUNCIONARIO        ");
-            System.out.println("================================");
-            System.out.println(" 1. Gerir Livros");
-            System.out.println(" 2. Gerir Reservas");
-            System.out.println(" 3. Gerir Requisitantes");
-            System.out.println(" 0. Voltar");
-            System.out.println("================================");
+            System.out.println("\n|================================|");
+            System.out.println("|        AREA FUNCIONARIO        |");
+            System.out.println("|================================|");
+            System.out.println("| 1. Gerir Livros                |");
+            System.out.println("| 2. Gerir Reservas              |");
+            System.out.println("| 3. Gerir Requisitantes         |");
+            System.out.println("| 0. Voltar                      |");
+            System.out.println("|================================|");
             System.out.print("Opcao: ");
             opcao = lerInteiro();
 
@@ -175,7 +175,7 @@ public class Main {
             System.out.println("       GESTAO DE RESERVAS       ");
             System.out.println("================================");
             System.out.println(" 1. Listar todas as reservas");
-            System.out.println(" 2. Listar reservas em aberto");
+            System.out.println(" 2. Listar reservas por devolver");
             System.out.println(" 3. Listar reservas atrasadas");
             System.out.println(" 4. Reservas de um requisitante");
             System.out.println(" 5. Nova reserva");
@@ -239,6 +239,9 @@ public class Main {
 
     private static void novaReserva() {
         try {
+            System.out.print("Seu Id de funcionario: "); int idFunc = lerInteiro();
+            System.out.print("ID do requisitante: "); int idReq = lerInteiro();
+
             System.out.println("\n--- Livros com exemplares disponiveis ---");
             livroService.listarDisponiveis().forEach(System.out::println);
 
@@ -251,15 +254,24 @@ public class Main {
                 return;
             }
 
-            resService.listarFuncionarios();
-            System.out.print("ID do funcionario: "); int idFunc = lerInteiro();
-            System.out.print("ID do requisitante: "); int idReq = lerInteiro();
 
-            LocalDate hoje     = LocalDate.now();
-            LocalDate prevista = hoje.plusDays(15);
+            LocalDate hoje = LocalDate.now();
+            System.out.println("Data de saida: " + hoje);
 
-            System.out.println("Data de saida: "           + hoje);
-            System.out.println("Data devolucao prevista: " + prevista + " (15 dias)");
+            LocalDate prevista = null;
+            while (prevista == null || !prevista.isAfter(hoje)) {
+                System.out.print("Data devolucao prevista (AAAA-MM-DD): ");
+                String input = sc.nextLine().trim();
+                try {
+                    prevista = LocalDate.parse(input);
+                    if (!prevista.isAfter(hoje)) {
+                        System.out.println("A data deve ser superior a data de saida (" + hoje + ").");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Formato invalido. Use AAAA-MM-DD.");
+                }
+            }
+
             System.out.print("Confirmar? (s/n): ");
             if (!sc.nextLine().equalsIgnoreCase("s")) {
                 System.out.println("Reserva cancelada.");
