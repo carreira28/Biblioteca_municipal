@@ -22,7 +22,8 @@ public class Main {
             System.out.println("| 0. Sair                        |");
             System.out.println("|================================|");
             System.out.print("Opcao: ");
-            opcao = lerInteiro();
+            opcao = sc.nextInt();
+            sc.nextLine();
 
             switch (opcao) {
                 case 1 -> loginFuncionario();
@@ -57,7 +58,8 @@ public class Main {
             System.out.println("| 0. Voltar                      |");
             System.out.println("|================================|");
             System.out.print("Opcao: ");
-            opcao = lerInteiro();
+            opcao = sc.nextInt();
+            sc.nextLine();
 
             switch (opcao) {
                 case 1 -> menuLivros();
@@ -72,19 +74,21 @@ public class Main {
     private static void menuLivros() {
         int opcao;
         do {
-            System.out.println("\n================================");
-            System.out.println("        GESTAO DE LIVROS        ");
-            System.out.println("================================");
-            System.out.println(" 1. Listar todos os livros");
-            System.out.println(" 2. Listar livros disponiveis");
-            System.out.println(" 3. Pesquisar por titulo");
-            System.out.println(" 4. Adicionar livro");
-            System.out.println(" 5. Atualizar livro");
-            System.out.println(" 6. Eliminar livro");
-            System.out.println(" 0. Voltar");
-            System.out.println("================================");
+            System.out.println("\n|================================|");
+            System.out.println("|        GESTAO DE LIVROS        |");
+            System.out.println("|================================|");
+            System.out.println("| 1. Listar todos os livros      |");
+            System.out.println("| 2. Listar livros disponiveis   |");
+            System.out.println("| 3. Pesquisar por titulo        |");
+            System.out.println("| 4. Adicionar livro             |");
+            System.out.println("| 5. Atualizar livro             |");
+            System.out.println("| 6. Eliminar livro              |");
+            System.out.println("| 0. Voltar                      |");
+            System.out.println("|================================|");
             System.out.print("Opcao: ");
-            opcao = lerInteiro();
+            opcao = sc.nextInt();
+            sc.nextLine();
+
 
             switch (opcao) {
                 case 1 -> listarTodosLivros();
@@ -104,7 +108,9 @@ public class Main {
             List<Livro> livros = livroService.listarTodos();
             if (livros.isEmpty()) { System.out.println("Nenhum livro encontrado."); return; }
             System.out.println("\n--- Lista de Livros ---");
-            livros.forEach(System.out::println);
+            for (Livro livro : livros) {
+                System.out.println(livro);
+            }
             System.out.println("Total: " + livros.size() + " Exemplares.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -114,7 +120,9 @@ public class Main {
             List<Livro> livros = livroService.listarDisponiveis();
             if (livros.isEmpty()) { System.out.println("Nenhum livro disponivel."); return; }
             System.out.println("\n--- Livros Disponiveis ---");
-            livros.forEach(System.out::println);
+            for (Livro livro : livros) {
+                System.out.println(livro);
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
@@ -124,23 +132,27 @@ public class Main {
         try {
             List<Livro> livros = livroService.pesquisarPorTitulo(termo);
             if (livros.isEmpty()) System.out.println("Nenhum resultado encontrado.");
-            else livros.forEach(System.out::println);
+            else {
+                for (Livro livro : livros) {
+                    System.out.println(livro);
+                }
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
     private static void adicionarLivro() {
         try {
             livroService.listarCategorias();
-            System.out.print("ID Categoria: ");  int idCat    = lerInteiro();
+            System.out.print("ID Categoria: ");  int idCat    = sc.nextInt(); sc.nextLine();
             livroService.listarIdiomas();
-            System.out.print("ID Idioma: ");     int idIdioma = lerInteiro();
+            System.out.print("ID Idioma: ");     int idIdioma = sc.nextInt(); sc.nextLine();
             livroService.listarEditoras();
-            System.out.print("ID Editora: ");    int idEdit   = lerInteiro();
+            System.out.print("ID Editora: ");    int idEdit   = sc.nextInt(); sc.nextLine();
             livroService.listarGeneros();
-            System.out.print("ID Genero: ");     int idGenero = lerInteiro();
+            System.out.print("ID Genero: ");     int idGenero = sc.nextInt(); sc.nextLine();
             System.out.print("ISBN: ");          String isbn   = sc.nextLine();
             System.out.print("Titulo: ");        String titulo = sc.nextLine();
-            System.out.print("Ano publicacao: "); int ano      = lerInteiro();
+            System.out.print("Ano publicacao: "); int ano      = sc.nextInt(); sc.nextLine();
 
             boolean ok = livroService.inserir(isbn, titulo, ano,
                     idCat, idIdioma, idEdit, idGenero);
@@ -149,7 +161,7 @@ public class Main {
     }
 
     private static void atualizarLivro() {
-        System.out.print("ID do livro: "); int id    = lerInteiro();
+        System.out.print("ID do livro: "); int id = sc.nextInt(); sc.nextLine();
         System.out.print("Novo titulo: "); String titulo = sc.nextLine();
         try {
             boolean ok = livroService.atualizar(id, titulo);
@@ -158,7 +170,7 @@ public class Main {
     }
 
     private static void eliminarLivro() {
-        System.out.print("ID do livro a eliminar: "); int id = lerInteiro();
+        System.out.print("ID do livro a eliminar: "); int id = sc.nextInt(); sc.nextLine();
         System.out.print("Tem a certeza? (s/n): ");
         if (sc.nextLine().equalsIgnoreCase("s")) {
             try {
@@ -171,19 +183,20 @@ public class Main {
     private static void menuReservas() {
         int opcao;
         do {
-            System.out.println("\n================================");
-            System.out.println("       GESTAO DE RESERVAS       ");
-            System.out.println("================================");
-            System.out.println(" 1. Listar todas as reservas");
-            System.out.println(" 2. Listar reservas por devolver");
-            System.out.println(" 3. Listar reservas atrasadas");
-            System.out.println(" 4. Reservas de um requisitante");
-            System.out.println(" 5. Nova reserva");
-            System.out.println(" 6. Registar devolucao");
-            System.out.println(" 0. Voltar");
-            System.out.println("================================");
+            System.out.println("\n|================================|");
+            System.out.println("|       GESTAO DE RESERVAS       |");
+            System.out.println("|================================|");
+            System.out.println("| 1. Listar todas as reservas    |");
+            System.out.println("| 2. Listar reservas por devolver|");
+            System.out.println("| 3. Listar reservas atrasadas   |");
+            System.out.println("| 4. Reservas de um requisitante |");
+            System.out.println("| 5. Nova reserva                |");
+            System.out.println("| 6. Registar devolucao          |");
+            System.out.println("| 0. Voltar                      |");
+            System.out.println("|================================|");
             System.out.print("Opcao: ");
-            opcao = lerInteiro();
+            opcao = sc.nextInt();
+            sc.nextLine();
 
             switch (opcao) {
                 case 1 -> listarTodasReservas();
@@ -213,7 +226,9 @@ public class Main {
             List<Reserva> lista = resService.listarEmAberto();
             if (lista.isEmpty()) { System.out.println("Nenhuma reserva em aberto."); return; }
             System.out.println("\n--- Reservas em Aberto ---");
-            lista.forEach(System.out::println);
+            for (Reserva reserva : lista) {
+                System.out.println(reserva);
+            }
             System.out.println("Total: " + lista.size() + " reserva(s) em aberto.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -223,37 +238,42 @@ public class Main {
             List<Reserva> lista = resService.listarAtrasadas();
             if (lista.isEmpty()) { System.out.println("Nenhuma reserva atrasada."); return; }
             System.out.println("\n--- Reservas ATRASADAS ---");
-            lista.forEach(System.out::println);
+            for (Reserva reserva : lista) {
+                System.out.println(reserva);
+            }
             System.out.println("Total: " + lista.size() + " reserva(s) atrasada(s).");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
     private static void reservasPorRequisitante() {
-        System.out.print("ID do requisitante: "); int id = lerInteiro();
+        System.out.print("ID do requisitante: "); int id = sc.nextInt(); sc.nextLine();
         try {
             List<Reserva> lista = resService.listarPorRequisitante(id);
             if (lista.isEmpty()) System.out.println("Nenhuma reserva encontrada.");
-            else lista.forEach(System.out::println);
+            else {
+                for (Reserva reserva : lista) {
+                    System.out.println(reserva);
+                }
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
     private static void novaReserva() {
         try {
-            System.out.print("Seu Id de funcionario: "); int idFunc = lerInteiro();
-            System.out.print("ID do requisitante: "); int idReq = lerInteiro();
+            System.out.print("Seu Id de funcionario: "); int idFunc = sc.nextInt(); sc.nextLine();
+            System.out.print("ID do requisitante: "); int idReq = sc.nextInt(); sc.nextLine();
 
             System.out.println("\n--- Livros com exemplares disponiveis ---");
             livroService.listarDisponiveis().forEach(System.out::println);
 
-            System.out.print("\nID do livro: ");    int idLivro    = lerInteiro();
+            System.out.print("\nID do livro: "); int idLivro = sc.nextInt(); sc.nextLine();
             resService.listarExemplaresDisponiveis(idLivro);
-            System.out.print("ID do exemplar: "); int idExemplar = lerInteiro();
+            System.out.print("ID do exemplar: "); int idExemplar = sc.nextInt(); sc.nextLine();
 
             if (!resService.exemplarDisponivel(idExemplar)) {
                 System.out.println("Exemplar nao disponivel.");
                 return;
             }
-
 
             LocalDate hoje = LocalDate.now();
             System.out.println("Data de saida: " + hoje);
@@ -287,7 +307,7 @@ public class Main {
         try {
             System.out.println("\n--- Reservas em Aberto ---");
             resService.listarEmAberto().forEach(System.out::println);
-            System.out.print("\nID da reserva a devolver: "); int id = lerInteiro();
+            System.out.print("\nID da reserva a devolver: "); int id = sc.nextInt(); sc.nextLine();
             boolean ok = resService.registarDevolucao(id);
             System.out.println(ok ? "Devolucao registada!" : "Reserva nao encontrada ou ja devolvida.");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
@@ -296,18 +316,19 @@ public class Main {
     private static void menuRequisitantes() {
         int opcao;
         do {
-            System.out.println("\n================================");
-            System.out.println("    GESTAO DE REQUISITANTES     ");
-            System.out.println("================================");
-            System.out.println(" 1. Listar todos");
-            System.out.println(" 2. Pesquisar por nome");
-            System.out.println(" 3. Adicionar requisitante");
-            System.out.println(" 4. Atualizar requisitante");
-            System.out.println(" 5. Eliminar requisitante");
-            System.out.println(" 0. Voltar");
-            System.out.println("================================");
+            System.out.println("\n|================================|");
+            System.out.println("|    GESTAO DE REQUISITANTES     |");
+            System.out.println("|================================|");
+            System.out.println("| 1. Listar todos                |");
+            System.out.println("| 2. Pesquisar por nome          |");
+            System.out.println("| 3. Adicionar requisitante      |");
+            System.out.println("| 4. Atualizar requisitante      |");
+            System.out.println("| 5. Eliminar requisitante       |");
+            System.out.println("| 0. Voltar                      |");
+            System.out.println("|================================|");
             System.out.print("Opcao: ");
-            opcao = lerInteiro();
+            opcao = sc.nextInt();
+            sc.nextLine();
 
             switch (opcao) {
                 case 1 -> listarTodosRequisitantes();
@@ -326,7 +347,9 @@ public class Main {
             List<Requisitante> lista = reqService.listarTodos();
             if (lista.isEmpty()) { System.out.println("Nenhum requisitante encontrado."); return; }
             System.out.println("\n--- Lista de Requisitantes ---");
-            lista.forEach(System.out::println);
+            for (Requisitante requisitante : lista) {
+                System.out.println(requisitante);
+            }
             System.out.println("Total: " + lista.size() + " requisitante(s).");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -337,10 +360,13 @@ public class Main {
         try {
             List<Requisitante> lista = reqService.pesquisarPorNome(termo);
             if (lista.isEmpty()) System.out.println("Nenhum resultado encontrado.");
-            else lista.forEach(System.out::println);
+            else{
+                for (Requisitante requisitante : lista) {
+                    System.out.println(requisitante);
+                }
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
-
     private static void adicionarRequisitante() {
         try {
             System.out.print("Nome: ");             String nome         = sc.nextLine();
@@ -353,12 +379,9 @@ public class Main {
     }
 
     private static void atualizarRequisitante() {
-        System.out.print("ID do requisitante: ");
-        int id = lerInteiro();
-        System.out.print("Novo nome: ");
-        String nome = sc.nextLine();
-        System.out.print("Novo contacto: ");
-        String contacto = sc.nextLine();
+        System.out.print("ID do requisitante: "); int id = sc.nextInt(); sc.nextLine();
+        System.out.print("Novo nome: ");          String nome     = sc.nextLine();
+        System.out.print("Novo contacto: ");      String contacto = sc.nextLine();
         try {
             boolean ok = reqService.atualizar(id, nome, contacto);
             System.out.println(ok ? "Requisitante atualizado!" : "Nao encontrado.");
@@ -366,7 +389,7 @@ public class Main {
     }
 
     private static void eliminarRequisitante() {
-        System.out.print("ID do requisitante a eliminar: "); int id = lerInteiro();
+        System.out.print("ID do requisitante a eliminar: "); int id = sc.nextInt(); sc.nextLine();
         System.out.print("Tem a certeza? (s/n): ");
         if (sc.nextLine().equalsIgnoreCase("s")) {
             try {
@@ -377,7 +400,7 @@ public class Main {
     }
 
     private static void menuRequisitante() {
-        System.out.print("O seu ID de requisitante: "); int idReq = lerInteiro();
+        System.out.print("O seu ID de requisitante: "); int idReq = sc.nextInt(); sc.nextLine();
         try {
             Requisitante req = reqService.buscarPorId(idReq);
             if (req == null) { System.out.println("Requisitante nao encontrado."); return; }
@@ -385,16 +408,17 @@ public class Main {
 
             int opcao;
             do {
-                System.out.println("\n================================");
-                System.out.println("       AREA REQUISITANTE        ");
-                System.out.println("================================");
-                System.out.println(" 1. Ver livros disponiveis");
-                System.out.println(" 2. Pesquisar livro por titulo");
-                System.out.println(" 3. Ver as minhas reservas");
-                System.out.println(" 0. Voltar");
-                System.out.println("================================");
+                System.out.println("\n|================================|");
+                System.out.println("|       AREA REQUISITANTE        |");
+                System.out.println("|================================|");
+                System.out.println("| 1. Ver livros disponiveis      |");
+                System.out.println("| 2. Pesquisar livro por titulo  |");
+                System.out.println("| 3. Ver as minhas reservas      |");
+                System.out.println("| 0. Voltar                      |");
+                System.out.println("|================================|");
                 System.out.print("Opcao: ");
-                opcao = lerInteiro();
+                opcao = sc.nextInt();
+                sc.nextLine();
 
                 switch (opcao) {
                     case 1 -> listarLivrosDisponiveis();
@@ -403,7 +427,10 @@ public class Main {
                         try {
                             List<Reserva> reservas = resService.listarPorRequisitante(idReq);
                             if (reservas.isEmpty()) System.out.println("Nenhuma reserva encontrada.");
-                            else reservas.forEach(System.out::println);
+                            else
+                                for (Reserva reserva : reservas) {
+                                System.out.println(reserva);
+                            }
                         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
                     }
                     case 0 -> System.out.println("Ate logo!");
@@ -412,15 +439,5 @@ public class Main {
             } while (opcao != 0);
 
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
-    }
-
-    private static int lerInteiro() {
-        while (true) {
-            try {
-                return Integer.parseInt(sc.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.print("Valor invalido. Tente novamente: ");
-            }
-        }
     }
 }
