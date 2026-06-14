@@ -98,17 +98,6 @@ public class RequisitanteService {
         }
     }
 
-    public void listarCodigosPostais() throws SQLException {
-        String sql = "SELECT id_codigo_postal, n_codigo_postal, localidade FROM codigo_postal ORDER BY localidade";
-        System.out.println("\n-- Codigos Postais --");
-        try (PreparedStatement stmt = DatabaseConnection.getConnection().prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next())
-                System.out.printf("[%d] %s - %s%n",
-                        rs.getInt(1), rs.getString(2), rs.getString(3));
-        }
-    }
-
     private Requisitante mapear(ResultSet rs) throws SQLException {
         return new Requisitante(
                 rs.getInt("id_requisitante"),

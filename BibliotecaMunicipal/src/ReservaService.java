@@ -47,7 +47,7 @@ public class ReservaService {
                 INNER JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
                 INNER JOIN livros l ON ex.id_livro = l.id_livro
                 WHERE res.data_dev_real IS NULL
-                  AND res.data_dev_prevista < CURRENT_DATE
+                AND res.data_dev_prevista < CURRENT_DATE
                 ORDER BY res.data_dev_prevista
                 """;
         return executarQuery(sql);
@@ -59,10 +59,10 @@ public class ReservaService {
                 req.nome AS nome_requisitante, f.nome AS nome_funcionario,
                 res.id_exemplar, l.titulo
                 FROM reserva res
-                JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
-                JOIN funcionarios f ON res.id_funcionario = f.id_funcionario
-                JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
-                JOIN livros l ON ex.id_livro = l.id_livro
+                INNER JOIN requisitantes req ON res.id_requisitante = req.id_requisitante
+                INNER JOIN funcionarios f ON res.id_funcionario = f.id_funcionario
+                INNER JOIN exemplar ex ON res.id_exemplar = ex.id_exemplar
+                INNER JOIN livros l ON ex.id_livro = l.id_livro
                 WHERE res.id_requisitante = ?
                 ORDER BY res.data_saida DESC
                 """;
