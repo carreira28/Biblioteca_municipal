@@ -7,10 +7,10 @@ public class Main {
 
     private static final Scanner sc = new Scanner(System.in);
     private static final String PASS_FUNC = "admin123";
-    private static final LivroService livroService       = new LivroService();
-    private static final RequisitanteService reqService  = new RequisitanteService();
-    private static final ReservaService resService       = new ReservaService();
-    private static final AutorService autorService       = new AutorService();   // NOVO
+    private static final LivroService livroService = new LivroService();
+    private static final RequisitanteService reqService = new RequisitanteService();
+    private static final ReservaService resService = new ReservaService();
+    private static final AutorService autorService = new AutorService();
 
 
     public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class Main {
             System.out.println("|================================|");
             System.out.println("| 1. Entrar como Funcionario     |");
             System.out.println("| 2. Entrar como Requisitante    |");
-            System.out.println("| 3. Registar como Requisitante  |"); // NOVO
+            System.out.println("| 3. Registar novo Requisitante  |");
             System.out.println("| 0. Sair                        |");
             System.out.println("|================================|");
             System.out.print("Opcao: ");
@@ -31,7 +31,7 @@ public class Main {
             switch (opcao) {
                 case 1 -> loginFuncionario();
                 case 2 -> menuRequisitante();
-                case 3 -> registarRequisitante(); // NOVO
+                case 3 -> registarRequisitante();
                 case 0 -> System.out.println("\nA sair...");
                 default -> System.out.println("Opcao invalida.");
             }
@@ -181,7 +181,7 @@ public class Main {
 
     private static void atualizarLivro() {
         System.out.print("ID do livro: "); int id = sc.nextInt(); sc.nextLine();
-        System.out.print("Novo titulo (Enter para manter): "); String titulo = sc.nextLine();
+        System.out.print("Novo titulo: "); String titulo = sc.nextLine();
         try {
             boolean ok = livroService.atualizar(id, titulo);
             if (ok) {
@@ -319,7 +319,10 @@ public class Main {
             int idReq = sc.nextInt(); sc.nextLine();
 
             System.out.println("\n--- Livros com exemplares disponiveis ---");
-            livroService.listarDisponiveis().forEach(System.out::println);
+            List<Livro> livrosDisponiveis = livroService.listarDisponiveis();
+            for (Livro livro : livrosDisponiveis) {
+                System.out.println(livro);
+            }
 
             System.out.print("\nID do livro: "); int idLivro = sc.nextInt(); sc.nextLine();
             resService.listarExemplaresDisponiveis(idLivro);
@@ -354,7 +357,11 @@ public class Main {
             }
 
             boolean ok = resService.criar(hoje, prevista, idReq, idFunc, idExemplar);
-            System.out.println(ok ? "Reserva criada com sucesso!" : "Nao foi possivel criar a reserva.");
+            if (ok) {
+                System.out.println("Reserva criada com sucesso!");
+            } else {
+                System.out.println("Nao foi possivel criar a reserva.");
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
@@ -367,7 +374,11 @@ public class Main {
             }
             System.out.print("\nID da reserva a devolver: "); int id = sc.nextInt(); sc.nextLine();
             boolean ok = resService.registarDevolucao(id);
-            System.out.println(ok ? "Devolucao registada!" : "Reserva nao encontrada ou ja devolvida.");
+            if (ok) {
+                System.out.println("Devolucao registada!");
+            } else {
+                System.out.println("Reserva nao encontrada ou ja devolvida.");
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 
@@ -484,7 +495,7 @@ public class Main {
     }
 
     private static void menuRequisitante() {
-        System.out.print("O seu ID de requisitante: ");
+        System.out.print("Qual o seu ID de requisitante: ");
         int idReq = sc.nextInt(); sc.nextLine();
         try {
             Requisitante req = reqService.buscarPorId(idReq);
@@ -512,8 +523,14 @@ public class Main {
                     case 3 -> {
                         try {
                             List<Reserva> reservas = resService.listarPorRequisitante(idReq);
-                            if (reservas.isEmpty()) System.out.println("Nenhuma reserva encontrada.");
-                            else for (Reserva r : reservas) System.out.println(r);
+                            if (reservas.isEmpty()){
+                                System.out.println("Nenhuma reserva encontrada.");
+                            }
+                            else{
+                                for (Reserva r : reservas){
+                                    System.out.println(r);
+                                }
+                            }
                         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
                     }
                     case 4 -> verAutoresLivro();
@@ -553,7 +570,9 @@ public class Main {
             List<Autor> lista = autorService.listarTodos();
             if (lista.isEmpty()) { System.out.println("Nenhum autor encontrado."); return; }
             System.out.println("\n--- Lista de Autores ---");
-            for (Autor a : lista) System.out.println(a);
+            for (Autor a : lista){
+                System.out.println(a);
+            }
             System.out.println("Total: " + lista.size() + " autor(es).");
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
@@ -562,8 +581,14 @@ public class Main {
         System.out.print("Nome a pesquisar: "); String termo = sc.nextLine();
         try {
             List<Autor> lista = autorService.pesquisarPorNome(termo);
-            if (lista.isEmpty()) System.out.println("Nenhum resultado encontrado.");
-            else for (Autor a : lista) System.out.println(a);
+            if (lista.isEmpty()){
+                System.out.println("Nenhum resultado encontrado.");
+            }
+            else{
+                for (Autor a : lista){
+                    System.out.println(a);
+                }
+            }
         } catch (SQLException e) { System.err.println("Erro: " + e.getMessage()); }
     }
 }
